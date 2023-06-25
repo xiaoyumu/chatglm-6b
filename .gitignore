@@ -130,7 +130,6 @@ dmypy.json
 .pyre/
 
 # Mac system file
-model/
 .idea
 
 THUDM/
