@@ -1,0 +1,15 @@
+protobuf
+transformers==4.27.1
+cpm_kernels
+# Install pytorch with conda and CUDA support
+# conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+torch>=1.10
+gradio
+mdtex2html
+sentencepiece
+accelerate
+# readline
+pyreadline3
+langchain
+InstructorEmbedding
+sentence_transformers
