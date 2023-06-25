@@ -1,30 +1,36 @@
 import datetime
+from http import HTTPStatus
 
-from fastapi import APIRouter
+import arrow
+from fastapi import APIRouter, HTTPException
 from fastapi import Request
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 
-from api.model.embedding import TextEmbeddingRequest
+from api.model.embedding import TextEmbeddingRequest, TextEmbeddingResponse
 
 router = APIRouter(prefix="/api/embeddings", tags=["Embeddings"])
 
 
-@router.post("", summary="Get Text embeddings.")
+@router.post("", summary="Get Text embeddings.", response_model=TextEmbeddingResponse)
 async def get_text_embeddings(req: Request, embedding_request: TextEmbeddingRequest):
-    now = datetime.datetime.now()
-    time = now.strftime("%Y-%m-%d %H:%M:%S")
-    print(time)
+    start = arrow.utcnow()
+
+    if not embedding_request.text and not embedding_request.texts:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="text and texts cannot be both empty.")
+
     embedding_ctrl: HuggingFaceInstructEmbeddings = req.app.state.embedding
     if embedding_request.text:
         embeddings = embedding_ctrl.embed_documents([embedding_request.text])
-    elif embedding_request.texts:
-        embeddings = embedding_ctrl.embed_documents(embedding_request.texts)
     else:
-        embeddings = []
-    answer = {
-        "embeddings": embeddings,
-        "text": embedding_request.text,
-        "status": 200,
-        "time": time
-    }
-    return answer
+        embeddings = embedding_ctrl.embed_documents(embedding_request.texts)
+
+    now = arrow.utcnow()
+    resp = TextEmbeddingResponse(
+        text=embedding_request.text,
+        texts=embedding_request.texts,
+        embeddings=embeddings,
+        start=start.isoformat(),
+        end=now.isoformat(),
+        took=(now - start).total_seconds()
+    )
+    return resp

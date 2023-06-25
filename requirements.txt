@@ -1,8 +1,11 @@
+# Install pytorch with conda and CUDA support first
+# $> conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+# Then
+# $> pip install -r requirements.txt
+
 protobuf
 transformers==4.27.1
 cpm_kernels
-# Install pytorch with conda and CUDA support
-# conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 torch>=1.10
 gradio
 mdtex2html
@@ -13,3 +16,5 @@ pyreadline3
 langchain
 InstructorEmbedding
 sentence_transformers
+arrow
+pytz
